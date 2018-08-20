@@ -2,6 +2,11 @@ const Immutable = require('immutable');
 
 // similar to test6, but group the elements by what they would be mapped to in fizzbuzz 
 const transform = (fromShape) => {
+  fromShape = fromShape.groupBy(i => {
+    return i % 5 === 0
+      ? i % 3 === 0 ? 'fizzbuzz' : 'buzz'
+      : i % 3 === 0 ? 'fizz' : "other"
+  });
   return fromShape;
 };
 
