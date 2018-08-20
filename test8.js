@@ -2,6 +2,11 @@ const Immutable = require('immutable');
 
 // transform into object where the k is the letter of the alphabet, and the value is the number of time it occurs. 
 const transform = (fromShape) => {
+  fromShape = fromShape.groupBy(i => {
+    return i
+  }).map(x => {
+    return x.count()
+  });
   return fromShape;
 };
 

@@ -2,6 +2,9 @@ const Immutable = require('immutable');
 
 // map each object to the 'name' attribute
 const transform = (fromShape) => {
+  fromShape = fromShape.map(entry =>{
+    return entry.get('name')
+  })
   return fromShape;
 };
 

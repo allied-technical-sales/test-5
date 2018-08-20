@@ -5,6 +5,12 @@ const Immutable = require('immutable');
 // e.g. in the fromShape, we have cat and snake with 'long' == true
 // so in the toShape, we want long: [ 'cat', 'snake' ]
 const transform = (fromShape) => {
+  fromShape = fromShape.first()
+    .mapKeys(i => fromShape
+      .groupBy(x => (x.get(i) === true ? i : '')).filter((x, k) => k === i))
+    .map((x, y) => y)
+    .reduce((acc, k) => acc.concat(k))
+    .map((x, y) => x.keySeq())
   return fromShape;
 };
 

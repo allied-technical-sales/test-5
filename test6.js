@@ -2,6 +2,11 @@ const Immutable = require('immutable');
 
 // map 'fizzbuzz' if multiple of three AND five, 'fizz' if multiple of three, 'buzz' if multiple of five, or just the number else
 const transform = (fromShape) => {
+  fromShape = fromShape.map(i => {
+    return i % 5 === 0 
+            ? i % 3 === 0 ? 'fizzbuzz' : 'buzz'  
+            : i % 3 === 0 ? 'fizz' : i
+  })
   return fromShape;
 };
 

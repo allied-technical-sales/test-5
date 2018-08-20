@@ -2,6 +2,11 @@ const Immutable = require('immutable');
 
 // simply transform the list of animals with leg counts into an object with sum of leg counts
 const transform = (fromShape) => {
+  fromShape = fromShape.reduce((acc, val) => {
+    return acc.mergeWith((prev, next) => {
+      return prev + next;
+    }, val);
+  });
   return fromShape;
 };
 
