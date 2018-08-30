@@ -44,51 +44,38 @@ const transform = (fromShape) => {
 	return fromShape
 		.reduce((result, val) => {
 			const uniqueSet = val.get('attributes')
-				.reduce((r, v) => {
-					return r.add(v.get('name'));
-				}, Set([]));
+				.reduce((r, v) => r.add(v.get('name')), Set([]));
 			return result.union(uniqueSet);
 		}, Set([]))
 		.toList()
 		.map(val => {
 			return Map({
 				name: val,
-				values: List([])
+				values: fromShape
+					.reduce((result, value) => {
+						const uniqueSet = value.get('attributes')
+							.filter(v => v.get('name') === val)
+							.reduce((r, v) => r.add(v.get('value')), Set([]));
+						return result.union(uniqueSet);
+					}, Set([]))
+					.toList()
+					.map(v => {
+						return Map({
+							value: v,
+							items: fromShape
+								.map((v, k) => v.setIn(['value'], k))
+								.reduce((result, value) => {
+									return value.get('attributes').find(x => x.get('value') === v)
+										? result.push(Map({
+											name: value.get('name'),
+											value: value.get('value')
+										}))
+										: result;
+								}, List([]))
+						});
+					})
 			});
-		})
-		.map(val => val.setIn(['values'],
-			fromShape
-				.reduce((result, value) => {
-					const uniqueSet = value.get('attributes')
-						.filter(v => v.get('name') === val.get('name'))
-						.reduce((r, v) => {
-							return r.add(v.get('value'));
-						}, Set([]));
-					return result.union(uniqueSet);
-				}, Set([]))
-				.toList()
-				.map(v => {
-					return Map({
-						value: v,
-						items: List([])
-					});
-				})
-				.map(iVal => iVal.setIn(['items'],
-					fromShape.map((v, k) => v.setIn(['value'], k))
-						.reduce((result, value) => {
-							return value.get('attributes').find(x => {
-								return x.get('value') === iVal.get('value');
-							})
-								? result.push(Map({
-									name: value.get('name'),
-									value: value.get('value')
-								}))
-								: result;
-						}, List([]))
-				))
-			)
-		)
-		;
+		});
 };
 
 const fromShape = Immutable.fromJS({
